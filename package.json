@@ -1,0 +1,29 @@
+{
+  "name": "qrcode-generator",
+  "version": "1.0.0",
+  "description": "A QR Code generator implemented using Node.js and Express.js",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SithilSemitha/qrcode-generator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SithilSemitha/qrcode-generator/issues"
+  },
+  "homepage": "https://github.com/SithilSemitha/qrcode-generator#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.2.1",
+    "qrcode": "^1.5.4"
+  }
+}
