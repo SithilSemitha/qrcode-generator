@@ -6,21 +6,120 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Generator</title>
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="/style.css" type="text/css">
 </head>
 
 <body>
-    <div class="container">
-        <h1>QR Code Generator</h1>
-        <hr>
-        <form action="/scan" method="POST" class="form">
-            <textarea name="text" id="text" cols="150" rows="10" placeholder="Enter URL or Text" required></textarea>
-            <button type="submit" class="btn btn-primary">Generate QR Code</button>
+    <div class="page">
+        <header class="topbar">
+            <div class="brand">
+                <div class="logo" aria-hidden="true"></div>
+                <div>
+                    <div class="title">QR Code Generator</div>
+                    <div class="subtitle">Generate. Customize. Download. Share.</div>
+                </div>
+            </div>
+            <a class="link" href="https://www.npmjs.com/package/qrcode" target="_blank" rel="noreferrer">Powered by qrcode</a>
+        </header>
 
-        </form>
+        <main class="grid">
+            <section class="card">
+                <div class="cardHeader">
+                    <div class="cardTitle">Create your QR</div>
+                    <div class="cardHint">Paste a URL or any text and tune the output.</div>
+                </div>
 
+                <% if (error) { %>
+                    <div class="alert" role="alert"><%= error %></div>
+                <% } %>
+
+                <form id="qrForm" action="/scan" method="POST" class="form">
+                    <label class="field">
+                        <span class="label">URL / Text</span>
+                        <textarea name="text" id="text" rows="5" placeholder="https://example.com" required><%= (text || '') %></textarea>
+                        <div class="fieldActions">
+                            <button type="button" id="copyTextBtn" class="btn btnGhost">Copy link/text</button>
+                            <span class="muted" id="copyStatus" aria-live="polite"></span>
+                        </div>
+                    </label>
+
+                    <div class="row">
+                        <label class="field">
+                            <span class="label">Size: <span class="value" id="sizeValue"><%= size %></span>px</span>
+                            <input type="range" id="size" name="size" min="64" max="1024" step="16" value="<%= size %>">
+                        </label>
+                        <label class="field">
+                            <span class="label">Quiet zone (margin): <span class="value" id="marginValue"><%= margin %></span></span>
+                            <input type="range" id="margin" name="margin" min="0" max="20" step="1" value="<%= margin %>">
+                        </label>
+                    </div>
+
+                    <div class="row">
+                        <label class="field">
+                            <span class="label">Error correction</span>
+                            <select id="level" name="level">
+                                <option value="L" <%= level === 'L' ? 'selected' : '' %>>L (smallest)</option>
+                                <option value="M" <%= level === 'M' ? 'selected' : '' %>>M (recommended)</option>
+                                <option value="Q" <%= level === 'Q' ? 'selected' : '' %>>Q</option>
+                                <option value="H" <%= level === 'H' ? 'selected' : '' %>>H (most robust)</option>
+                            </select>
+                        </label>
+                        <label class="field">
+                            <span class="label">Colors</span>
+                            <div class="colorRow">
+                                <label class="colorField">
+                                    <span class="muted">Dark</span>
+                                    <input type="color" id="dark" name="dark" value="<%= dark %>">
+                                </label>
+                                <label class="colorField">
+                                    <span class="muted">Light</span>
+                                    <input type="color" id="light" name="light" value="<%= light %>">
+                                </label>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="actions">
+                        <button type="submit" class="btn btnPrimary" id="generateBtn">Generate QR</button>
+                        <button type="button" class="btn btnGhost" id="resetBtn">Reset</button>
+                        <span class="muted" id="genStatus" aria-live="polite"></span>
+                    </div>
+                </form>
+            </section>
+
+            <section class="card">
+                <div class="cardHeader">
+                    <div class="cardTitle">Preview</div>
+                    <div class="cardHint">Download as PNG/JPG when ready.</div>
+                </div>
+
+                <div class="preview">
+                    <div class="qrFrame" id="qrFrame">
+                        <img id="qrImg" alt="Generated QR code" src="<%= qr_code ? qr_code : '' %>" <%= qr_code ? '' : 'style="display:none;"' %>>
+                        <div id="qrEmpty" class="empty" <%= qr_code ? 'style="display:none;"' : '' %>>
+                            Your QR will appear here.
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button type="button" class="btn btnPrimary" id="downloadPngBtn" disabled>Download PNG</button>
+                        <button type="button" class="btn btnGhost" id="downloadJpgBtn" disabled>Download JPG</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            Tip: bigger size + higher error correction improves scan reliability, but increases density.
+        </footer>
     </div>
+
+    <script>
+        window.__QR_INITIAL__ = {
+            hasQr: <%= qr_code ? 'true' : 'false' %>,
+        };
+    </script>
+    <script src="/app.js"></script>
 </body>
 
 </html>
